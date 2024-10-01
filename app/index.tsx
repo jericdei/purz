@@ -1,16 +1,17 @@
-import { Redirect } from "expo-router";
-import { Text, SafeAreaView } from "react-native";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import PurzLogo from "~/components/vector/purz.logo";
 
 export default function Home() {
-  const isAuthenticated = false;
-
-  if (!isAuthenticated) {
-    return <Redirect href="/auth/login" />;
-  }
-
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
-      <Text className="text-red-600">Home</Text>
+      <PurzLogo />
+
+      <Button onPress={() => router.push("/auth/register")}>
+        <Text>Get Started</Text>
+      </Button>
     </SafeAreaView>
   );
 }

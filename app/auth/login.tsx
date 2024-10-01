@@ -3,22 +3,25 @@ import { SafeAreaView, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
+import axios from "~/lib/axios";
 
 type LoginFormData = {
   email: string;
-  password: string;
+  passcode: string;
 };
 
 export default function Login() {
   const { control, handleSubmit } = useForm<LoginFormData>({
     defaultValues: {
       email: "",
-      password: "",
+      passcode: "",
     },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+  const onSubmit = async (data: LoginFormData) => {
+    const res = await axios.post("/auth/login", data);
+
+    console.log(res.data);
   };
 
   return (
@@ -47,7 +50,7 @@ export default function Login() {
         />
 
         <Controller
-          name="password"
+          name="passcode"
           control={control}
           rules={{
             required: "Password is required",
