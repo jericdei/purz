@@ -9,7 +9,7 @@ export default function Home() {
     <SafeAreaView className="flex-1 items-center justify-center">
       <PurzLogo />
 
-      <Button onPress={() => router.push("/auth/register")}>
+      <Button onPress={() => router.push("/auth/generate")}>
         <Text>Get Started</Text>
       </Button>
     </SafeAreaView>

@@ -6,48 +6,77 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import PurzLogo from "~/components/vector/purz.logo";
 import { Button } from "~/components/ui/button";
+import axios from "~/lib/axios";
+import { router, useLocalSearchParams } from "expo-router";
+import { AxiosError } from "axios";
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  code: z.string().min(5).max(5),
 });
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 
-export default function Register() {
+export default function Validate() {
+  const { email } = useLocalSearchParams();
+
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      email: "",
+      code: "",
     },
   });
 
-  const onSubmit = (values: RegisterSchema) => {
-    console.log(values);
+  const onSubmit = async ({ code }: RegisterSchema) => {
+    try {
+      if (!email) {
+        throw new Error();
+      }
+
+      await axios.post("/auth/code/validate", {
+        email,
+        code,
+      });
+
+      router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error(error);
+
+        if (error.status === 422) {
+          return setError("code", {
+            message: error.response?.data.message,
+          });
+        }
+      }
+
+      return setError("code", {
+        message: "Something went wrong. Please try again.",
+      });
+    }
   };
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center mx-32">
       <PurzLogo />
 
-      <Text className="text-center">
-        Enter your email address to get started.
-      </Text>
+      <Text className="text-center">Enter the code sent to your email.</Text>
 
       <View className="flex flex-col gap-4 mt-16 w-full">
         <Controller
-          name="email"
+          name="code"
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              autoCapitalize="none"
-              textContentType="emailAddress"
-              keyboardType="email-address"
+              textContentType="oneTimeCode"
+              keyboardType="number-pad"
+              maxLength={5}
               spellCheck={false}
-              placeholder="Email"
+              placeholder="Code"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -55,9 +84,9 @@ export default function Register() {
           )}
         />
 
-        {errors.email && (
+        {errors.code && (
           <Text className="text-red-500 text-center">
-            {errors.email.message}
+            {errors.code.message}
           </Text>
         )}
 
