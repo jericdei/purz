@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import axios from "~/lib/axios";
 import { router, useLocalSearchParams } from "expo-router";
 import { AxiosError } from "axios";
+import PinInput from "~/components/pin-input";
 
 const registerSchema = z.object({
   code: z.string().min(5).max(5),
@@ -47,7 +48,7 @@ export default function Validate() {
       if (error instanceof AxiosError) {
         console.error(error);
 
-        if (error.status === 422) {
+        if (error.status === 403) {
           return setError("code", {
             message: error.response?.data.message,
           });
@@ -71,14 +72,10 @@ export default function Validate() {
           name="code"
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              textContentType="oneTimeCode"
-              keyboardType="number-pad"
-              maxLength={5}
-              spellCheck={false}
-              placeholder="Code"
+            <PinInput
+              length={5}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChange={onChange}
               value={value}
             />
           )}
