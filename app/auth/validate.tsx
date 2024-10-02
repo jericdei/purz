@@ -43,16 +43,15 @@ export default function Validate() {
         code,
       });
 
-      router.push("/dashboard");
+      router.dismissAll();
+      router.replace("/dashboard");
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error(error);
+      console.error(error);
 
-        if (error.status === 403) {
-          return setError("code", {
-            message: error.response?.data.message,
-          });
-        }
+      if (error instanceof AxiosError) {
+        return setError("code", {
+          message: error.response?.data.message,
+        });
       }
 
       return setError("code", {

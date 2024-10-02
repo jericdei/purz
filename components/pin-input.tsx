@@ -28,7 +28,7 @@ export default function PinInput({
         <TextInput
           ref={refs[index]}
           key={index}
-          className="border border-black aspect-square w-12 text-center rounded-md text-lg"
+          className="border border-black aspect-square w-12 text-center rounded-md"
           maxLength={1}
           keyboardType="number-pad"
           autoCorrect={false}

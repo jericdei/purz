@@ -62,12 +62,10 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/generate" options={{ headerShown: false }} />
-        <Stack.Screen name="auth/validate" options={{ headerShown: false }} />
-        <Stack.Screen name="dashboard/index" options={{ headerShown: false }} />
+
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="dashboard/index" />
       </Stack>
     </ThemeProvider>
   );
