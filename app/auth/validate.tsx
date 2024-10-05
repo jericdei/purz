@@ -3,13 +3,14 @@ import { SafeAreaView, View } from "react-native";
 import { z } from "zod";
 import { Text } from "~/components/ui/text";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "~/components/ui/input";
 import PurzLogo from "~/components/vector/purz.logo";
 import { Button } from "~/components/ui/button";
 import axios from "~/lib/axios";
-import { router, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { AxiosError } from "axios";
 import PinInput from "~/components/pin-input";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuthStore } from "~/stores/auth.store";
 
 const registerSchema = z.object({
   code: z.string().min(5).max(5),
@@ -18,6 +19,8 @@ const registerSchema = z.object({
 type RegisterSchema = z.infer<typeof registerSchema>;
 
 export default function Validate() {
+  const { setUser } = useAuthStore((state) => state);
+
   const { email } = useLocalSearchParams();
 
   const {
@@ -38,10 +41,13 @@ export default function Validate() {
         throw new Error();
       }
 
-      await axios.post("/auth/code/validate", {
+      const response = await axios.post("/auth/code/validate", {
         email,
         code,
       });
+
+      await AsyncStorage.setItem("auth_token", response.data.token);
+      await setUser();
 
       router.dismissAll();
       router.replace("/dashboard");
