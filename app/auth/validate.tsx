@@ -57,6 +57,8 @@ export default function Validate() {
 
       if (isRegister) {
         redirect = "/auth/pin/create";
+      } else {
+        redirect = "/auth/pin";
       }
 
       router.replace(redirect);

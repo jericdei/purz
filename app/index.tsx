@@ -1,4 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect, router } from "expo-router";
+import { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -7,6 +9,16 @@ import { useAuthStore } from "~/stores/auth.store";
 
 export default function Home() {
   const { user } = useAuthStore((state) => state);
+
+  useEffect(() => {
+    (async () => {
+      const hasLaunched = await AsyncStorage.getItem("hasLaunched");
+
+      if (Boolean(hasLaunched)) {
+        return router.replace("/auth/pin");
+      }
+    })();
+  });
 
   if (user) {
     return <Redirect href="/dashboard" />;

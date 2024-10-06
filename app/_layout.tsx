@@ -5,7 +5,7 @@ import { Theme, ThemeProvider } from "@react-navigation/native";
 import { router, SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { AppState, AppStateStatus, Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/stores/auth.store";
@@ -30,37 +30,54 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-  const [appState, setAppState] = React.useState(AppState.currentState);
+
+  const appState = React.useRef(AppState.currentState);
 
   const { setUser } = useAuthStore((state) => state);
 
   React.useEffect(() => {
     (async () => {
+      await AsyncStorage.setItem("hasLaunched", "true");
+
+      await setUser();
+
       const subscription = AppState.addEventListener(
         "change",
-        handleAppStateChange
+        (nextAppState) => {
+          if (
+            appState.current.match(/inactive|background/) &&
+            nextAppState === "active"
+          ) {
+            router.replace("/auth/pin");
+          }
+
+          appState.current = nextAppState;
+        }
       );
 
       const theme = await AsyncStorage.getItem("theme");
+
       if (Platform.OS === "web") {
         // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add("bg-background");
       }
+
       if (!theme) {
         AsyncStorage.setItem("theme", colorScheme);
         setIsColorSchemeLoaded(true);
         return;
       }
+
       const colorTheme = theme === "dark" ? "dark" : "light";
+
       if (colorTheme !== colorScheme) {
         setColorScheme(colorTheme);
 
         setIsColorSchemeLoaded(true);
         return;
       }
-      setIsColorSchemeLoaded(true);
 
-      await setUser();
+      setIsColorSchemeLoaded(true);
 
       return () => {
         subscription.remove();
@@ -69,14 +86,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     });
   }, []);
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (appState.match(/inactive|background/) && nextAppState === "active") {
-      router.replace("/auth/pin");
-    }
-
-    setAppState(nextAppState);
-  };
 
   if (!isColorSchemeLoaded) {
     return null;

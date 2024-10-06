@@ -15,7 +15,7 @@ import { useUserStore } from "~/stores/user.store";
 const createPinSchema = z
   .object({
     pin: z.string().min(6).max(6),
-    confirmPin: z.string().min(6),
+    confirmPin: z.string().min(6).max(6),
   })
   .superRefine(({ pin, confirmPin }, ctx) => {
     if (pin !== confirmPin) {
