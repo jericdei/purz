@@ -60,7 +60,7 @@ export default function PinCreate() {
     try {
       await updatePassCode(user.id, values.pin);
 
-      router.replace("/dashboard");
+      router.replace("/profile/update");
     } catch (error) {
       let message = "Something went wrong. Please try again.";
 

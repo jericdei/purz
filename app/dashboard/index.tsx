@@ -15,9 +15,10 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center">
-      <Text>BRUHHH</Text>
       <Text>{JSON.stringify(user, null, 2)}</Text>
-
+      <Button className="mt-8" onPress={() => router.push("/profile/update")}>
+        <Text>Edit Profile</Text>
+      </Button>
       <Button className="mt-8" onPress={handleLogout}>
         <Text>Logout</Text>
       </Button>

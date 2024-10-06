@@ -16,3 +16,14 @@ export const NAV_THEME = {
     text: "hsl(0 0% 98%)", // foreground
   },
 };
+
+export const GENDER = {
+  MALE: "male",
+  FEMALE: "female",
+  OTHER: "other",
+} as const;
+
+export const GENDER_OPTIONS = Object.entries(GENDER).map(([_, value]) => ({
+  label: value.at(0)?.toUpperCase() + value.slice(1),
+  value,
+}));
