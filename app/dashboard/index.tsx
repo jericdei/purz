@@ -10,7 +10,7 @@ export default function Dashboard() {
   const handleLogout = async () => {
     await logout();
 
-    return router.replace("/auth/login");
+    return router.replace("/");
   };
 
   return (

@@ -2,12 +2,13 @@ import "~/global.css";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
-import { SplashScreen, Stack } from "expo-router";
+import { router, SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Platform } from "react-native";
+import { AppState, AppStateStatus, Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { useAuthStore } from "~/stores/auth.store";
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -29,9 +30,17 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+  const [appState, setAppState] = React.useState(AppState.currentState);
+
+  const { setUser } = useAuthStore((state) => state);
 
   React.useEffect(() => {
     (async () => {
+      const subscription = AppState.addEventListener(
+        "change",
+        handleAppStateChange
+      );
+
       const theme = await AsyncStorage.getItem("theme");
       if (Platform.OS === "web") {
         // Adds the background color to the html element to prevent white background on overscroll.
@@ -50,10 +59,24 @@ export default function RootLayout() {
         return;
       }
       setIsColorSchemeLoaded(true);
+
+      await setUser();
+
+      return () => {
+        subscription.remove();
+      };
     })().finally(() => {
       SplashScreen.hideAsync();
     });
   }, []);
+
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (appState.match(/inactive|background/) && nextAppState === "active") {
+      router.replace("/auth/pin");
+    }
+
+    setAppState(nextAppState);
+  };
 
   if (!isColorSchemeLoaded) {
     return null;

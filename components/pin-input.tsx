@@ -6,6 +6,7 @@ interface PinInputProps {
   onChange: (value: string) => void;
   onBlur?: () => void;
   value: string;
+  isHidden?: boolean;
 }
 
 export default function PinInput({
@@ -13,6 +14,7 @@ export default function PinInput({
   onChange,
   onBlur,
   value,
+  isHidden,
 }: PinInputProps) {
   const [arrayValue, setArrayValue] = useState<string[]>([]);
 
@@ -21,6 +23,10 @@ export default function PinInput({
   useEffect(() => {
     onChange(arrayValue.join(""));
   }, [arrayValue]);
+
+  useEffect(() => {
+    setArrayValue(value.split(""));
+  }, [value]);
 
   return (
     <View className="flex flex-row justify-center gap-2">
@@ -34,6 +40,7 @@ export default function PinInput({
           autoCorrect={false}
           autoCapitalize="none"
           inputMode="numeric"
+          secureTextEntry={isHidden}
           autoFocus={index === 0}
           onChangeText={(val) => {
             const nextValue = [...arrayValue];

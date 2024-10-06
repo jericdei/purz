@@ -37,9 +37,9 @@ export default function Generate() {
 
       router.push(`/auth/validate?email=${email}`);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error(error);
+      console.error(error);
 
+      if (error instanceof AxiosError) {
         if (error.status === 422) {
           return setError("email", {
             message: error.response?.data.message,
