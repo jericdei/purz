@@ -8,6 +8,8 @@ import {
 } from "~/components/ui/select";
 import FormLabel from "../form-label";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import { cn } from "~/lib/utils";
+import { Text } from "../ui/text";
 
 interface DropdownInputProps<T extends FieldValues> {
   control: Control<T>;
@@ -16,6 +18,7 @@ interface DropdownInputProps<T extends FieldValues> {
   name: Path<T>;
   required?: boolean;
   placeholder: string;
+  error?: string;
 }
 
 export default function DropdownInput<T extends FieldValues>({
@@ -25,6 +28,7 @@ export default function DropdownInput<T extends FieldValues>({
   required,
   placeholder,
   options,
+  error,
 }: DropdownInputProps<T>) {
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -48,11 +52,13 @@ export default function DropdownInput<T extends FieldValues>({
         >
           <FormLabel text={label} required={required} />
 
-          <SelectTrigger className="w-full">
+          <SelectTrigger className={cn("w-full", error && "border-red-500")}>
             <SelectValue
               className="text-foreground text-sm native:text-lg"
               placeholder={placeholder}
             />
+
+            {error && <Text className="text-red-500 text-sm">{error}</Text>}
           </SelectTrigger>
 
           <SelectContent insets={contentInsets} className="w-5/6">
