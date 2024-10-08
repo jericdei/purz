@@ -2,6 +2,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -10,11 +11,12 @@ import FormLabel from "../form-label";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { cn } from "~/lib/utils";
 import { Text } from "../ui/text";
+import { ScrollView } from "react-native";
 
 interface DropdownInputProps<T extends FieldValues> {
   control: Control<T>;
   label: string;
-  options: { label: string; value: string }[];
+  options?: { label: string; value: string }[];
   name: Path<T>;
   required?: boolean;
   placeholder: string;
@@ -27,7 +29,7 @@ export default function DropdownInput<T extends FieldValues>({
   name,
   required,
   placeholder,
-  options,
+  options = [],
   error,
 }: DropdownInputProps<T>) {
   const insets = useSafeAreaInsets();
@@ -62,11 +64,15 @@ export default function DropdownInput<T extends FieldValues>({
           </SelectTrigger>
 
           <SelectContent insets={contentInsets} className="w-5/6">
-            {options.map(({ label, value }) => (
-              <SelectItem key={value} label={label} value={value}>
-                {label}
-              </SelectItem>
-            ))}
+            <ScrollView className="max-h-80">
+              <SelectGroup onStartShouldSetResponder={() => true}>
+                {options.map(({ label, value }) => (
+                  <SelectItem key={value} label={label} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </ScrollView>
           </SelectContent>
         </Select>
       )}

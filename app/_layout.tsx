@@ -10,6 +10,7 @@ import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/stores/auth.store";
 import { PortalHost } from "@rn-primitives/portal";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -27,6 +28,8 @@ export {
 
 // Prevent the splash screen from auto-hiding before getting the color scheme.
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
@@ -94,14 +97,16 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
 
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="dashboard/index" />
-      </Stack>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="dashboard/index" />
+        </Stack>
 
-      <PortalHost />
+        <PortalHost />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
