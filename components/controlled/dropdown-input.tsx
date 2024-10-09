@@ -5,7 +5,6 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "~/components/ui/select";
 import FormLabel from "../form-label";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
@@ -21,6 +20,8 @@ interface DropdownInputProps<T extends FieldValues> {
   required?: boolean;
   placeholder: string;
   error?: string;
+  disabled?: boolean;
+  onValueChange?: (value?: string) => void;
 }
 
 export default function DropdownInput<T extends FieldValues>({
@@ -31,6 +32,8 @@ export default function DropdownInput<T extends FieldValues>({
   placeholder,
   options = [],
   error,
+  disabled,
+  onValueChange,
 }: DropdownInputProps<T>) {
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -49,16 +52,19 @@ export default function DropdownInput<T extends FieldValues>({
           className="flex flex-col gap-4 w-full"
           onValueChange={(val) => {
             onChange(val?.value);
+            onValueChange?.(val?.value);
           }}
-          value={options.find((o) => o.value === value)}
+          value={value || undefined}
         >
           <FormLabel text={label} required={required} />
 
-          <SelectTrigger className={cn("w-full", error && "border-red-500")}>
-            <SelectValue
-              className="text-foreground text-sm native:text-lg"
-              placeholder={placeholder}
-            />
+          <SelectTrigger
+            className={cn("w-full", error && "border-red-500")}
+            disabled={disabled}
+          >
+            <Text className="text-lg">
+              {options.find((o) => o.value === value)?.label || placeholder}
+            </Text>
 
             {error && <Text className="text-red-500 text-sm">{error}</Text>}
           </SelectTrigger>
