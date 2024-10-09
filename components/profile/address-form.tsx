@@ -19,6 +19,7 @@ const MANILA_CODE = "80600";
 export default function AddressForm({
   form,
   setPart,
+  className,
   onSubmit,
 }: FormPartProps & { onSubmit: () => void }) {
   const [regionCode, setRegionCode] = useState<string | undefined>(undefined);
@@ -46,7 +47,7 @@ export default function AddressForm({
   const isManila = cityCode === MANILA_CODE;
 
   return (
-    <View>
+    <View className={className}>
       <ScrollView className="max-h-[60vh]">
         <View className="flex flex-col gap-4 mt-16 w-full">
           <DropdownInput

@@ -6,10 +6,15 @@ import DropdownInput from "../controlled/dropdown-input";
 import { GENDER_OPTIONS } from "~/lib/constants";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import { cn } from "~/lib/utils";
 
-export default function PersonalForm({ form, setPart }: FormPartProps) {
+export default function PersonalForm({
+  form,
+  setPart,
+  className,
+}: FormPartProps) {
   return (
-    <View className="flex flex-col gap-4 mt-16 w-full">
+    <View className={cn("flex flex-col gap-4 mt-16 w-full", className)}>
       <TextInput
         control={form.control}
         name="contact_number"

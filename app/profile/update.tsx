@@ -8,6 +8,7 @@ import NamesForm from "~/components/profile/names-form";
 import PersonalForm from "~/components/profile/personal-form";
 import { Text } from "~/components/ui/text";
 import { updateProfileSchema, UpdateProfileSchema } from "~/lib/schema";
+import { cn } from "~/lib/utils";
 
 export default function UpdateProfile() {
   const [part, setPart] = useState<FormPart>(FORM_PARTS.NAMES);
@@ -45,19 +46,24 @@ export default function UpdateProfile() {
         Please fill up your personal details.
       </Text>
 
-      {part === FORM_PARTS.NAMES && <NamesForm form={form} setPart={setPart} />}
+      <NamesForm
+        className={cn(part === FORM_PARTS.NAMES ? "block" : "hidden")}
+        form={form}
+        setPart={setPart}
+      />
 
-      {part === FORM_PARTS.PERSONAL && (
-        <PersonalForm form={form} setPart={setPart} />
-      )}
+      <PersonalForm
+        className={cn(part === FORM_PARTS.PERSONAL ? "block" : "hidden")}
+        form={form}
+        setPart={setPart}
+      />
 
-      {part === FORM_PARTS.ADDRESS && (
-        <AddressForm
-          form={form}
-          setPart={setPart}
-          onSubmit={form.handleSubmit(onSubmit)}
-        />
-      )}
+      <AddressForm
+        className={cn(part === FORM_PARTS.ADDRESS ? "block" : "hidden")}
+        form={form}
+        setPart={setPart}
+        onSubmit={form.handleSubmit(onSubmit)}
+      />
     </SafeAreaView>
   );
 }
